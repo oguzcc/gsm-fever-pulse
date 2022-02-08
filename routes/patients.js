@@ -21,7 +21,7 @@ router.get('/', [auth], async (req, res) => {
 
 // Post new health info - temporary
 router.post('/', async (req, res) => {
-  let patient = await Patient.findOne({ _id: '6202b11adde5f1c2a0835ba2' });
+  let patient = await Patient.findOne({ _id: '6202b4323f2d5fd5ff14e5b2' });
 
   patient.health.push(req.body);
 
