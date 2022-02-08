@@ -1,0 +1,14 @@
+{
+  "name": "Ali",
+  "surname": "Veli",
+  "age": "25",
+  "email": "ahmet@gmail.com",
+  "password": "123456",
+  "health": [
+    {
+      "fever": "12",
+      "pulse": "60",
+      "time": "12:00"
+    }
+  ]
+}
