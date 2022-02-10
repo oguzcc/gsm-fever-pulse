@@ -45,12 +45,10 @@ const patientSchema = new mongoose.Schema({
   health: [
     {
       fever: {
-        type: Number,
-        min: 0,
+        type: String,
       },
       pulse: {
-        type: Number,
-        min: 0,
+        type: String,
       },
       time: {
         type: Date,
