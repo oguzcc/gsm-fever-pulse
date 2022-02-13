@@ -8,7 +8,7 @@ const router = express.Router();
 // Get all doctors
 router.get('/', async (req, res) => {
   const queryResult = req.query;
-  const doctors = await Doctor.find(queryResult);
+  const doctors = await Doctor.find(queryResult).select('-password -__v');
 
   if (!doctors || doctors.length == 0)
     return res.status(404).send('The doctor with the given Id was not found.');
@@ -23,7 +23,9 @@ router.post('/create', async (req, res) => {
   const { error } = validateDoctor(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let doctor = await Doctor.findOne({ email: req.body.email });
+  let doctor = await Doctor.findOne({ email: req.body.email }).select(
+    '-password -__v'
+  );
   if (doctor)
     return res.status(400).send('Doctor with the given email exists.');
 
@@ -42,7 +44,9 @@ router.post('/create', async (req, res) => {
 
 // Add a patient to doctor
 router.patch('/:doctorId', async (req, res) => {
-  const doctor = await Doctor.findOne({ _id: req.params.doctorId });
+  const doctor = await Doctor.findOne({ _id: req.params.doctorId }).select(
+    '-password -__v'
+  );
   if (!doctor)
     return res.status(404).send('The doctor with the given id was not found.');
 

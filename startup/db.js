@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 module.exports = function () {
   mongoose
-    .connect('mongodb://localhost:27017/yusufDb', {
+    .connect(process.env.DB_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })

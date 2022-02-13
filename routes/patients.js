@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const queryResult = req.query;
 
-  const patients = await Patient.find(queryResult);
+  const patients = await Patient.find(queryResult).select('-password -__v');
 
   if (!patients || patients.length == 0)
     return res.status(404).send('The patient with the given Id was not found.');
@@ -22,7 +22,9 @@ router.post('/create', async (req, res) => {
   const { error } = validatePatient(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let patient = await Patient.findOne({ email: req.body.email });
+  let patient = await Patient.findOne({ email: req.body.email }).select(
+    '-password -__v'
+  );
   if (patient)
     return res.status(400).send('Patient with the given email exists.');
 
@@ -63,7 +65,9 @@ router.get('/random', async (req, res) => {
 
 // Assign a doctor to patient
 router.patch('/:patientId', async (req, res) => {
-  const patient = await Patient.findOne({ _id: req.params.patientId });
+  const patient = await Patient.findOne({ _id: req.params.patientId }).select(
+    '-password -__v'
+  );
   if (!patient)
     return res.status(404).send('The patient with the given id was not found.');
 
@@ -78,7 +82,9 @@ router.patch('/:patientId', async (req, res) => {
 
 // Post new health info - temporary
 router.post('/', async (req, res) => {
-  let patient = await Patient.findOne({ _id: '6202b4323f2d5fd5ff14e5b2' });
+  let patient = await Patient.findOne({
+    _id: '6202b4323f2d5fd5ff14e5b2',
+  }).select('-password -__v');
 
   patient.health.push(req.body);
 
@@ -89,7 +95,9 @@ router.post('/', async (req, res) => {
 
 // Post new health info
 router.post('/:email', async (req, res) => {
-  let patient = await Patient.findOne({ email: req.params.email });
+  let patient = await Patient.findOne({ email: req.params.email }).select(
+    '-password -__v'
+  );
   if (!patient)
     return res
       .status(404)

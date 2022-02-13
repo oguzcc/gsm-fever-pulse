@@ -1,1 +1,8 @@
-{}
+{
+  "_id": "6209349e7574479d14a2e3c7",
+  "name": "doctor10",
+  "surname": "doctor10",
+  "email": "doctor10@hospital.com",
+  "role": "doctor",
+  "patients": ["62091c8537b70017b8f85b7f"]
+}

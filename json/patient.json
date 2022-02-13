@@ -1,14 +1,17 @@
 {
-  "name": "Ali",
-  "surname": "Veli",
-  "age": "25",
-  "email": "ahmet@gmail.com",
-  "password": "123456",
+  "_id": "6206c0db4d73e974ae03f932",
+  "name": "hasta01",
+  "surname": "hasta01",
+  "email": "hasta01@hospital.com",
+  "age": 18,
+  "role": "patient",
+  "doctor": "6206c065f0e90955f20a2463",
   "health": [
     {
-      "fever": "12",
-      "pulse": "60",
-      "time": "12:00"
+      "fever": "37",
+      "pulse": "120",
+      "_id": "6206c1044d73e974ae03f937",
+      "time": "2022-02-11T20:03:16.147Z"
     }
   ]
 }

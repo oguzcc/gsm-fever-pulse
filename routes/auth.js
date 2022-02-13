@@ -7,8 +7,12 @@ const router = express.Router();
 
 // Auth a person
 router.post('/', async (req, res) => {
-  const doctor = await Doctor.findOne({ email: req.body.email });
-  const patient = await Patient.findOne({ email: req.body.email });
+  const doctor = await Doctor.findOne({ email: req.body.email }).select(
+    '-password -__v'
+  );
+  const patient = await Patient.findOne({ email: req.body.email }).select(
+    '-password -__v'
+  );
   let person;
 
   if (!doctor && !patient) return res.status(400).send('Invalid email.');
