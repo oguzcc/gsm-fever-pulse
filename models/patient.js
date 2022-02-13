@@ -63,7 +63,7 @@ const patientSchema = new mongoose.Schema({
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Doctor',
-    default: '6206c065f0e90955f20a2463',
+    default: '620940cc6a7b1dc562595873',
   },
 });
 
