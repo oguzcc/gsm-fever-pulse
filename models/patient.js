@@ -38,7 +38,7 @@ const patientSchema = new mongoose.Schema({
   },
   age: {
     type: Number,
-    default: 12,
+    default: 18,
     min: 0,
     max: 120,
   },
@@ -56,27 +56,28 @@ const patientSchema = new mongoose.Schema({
       },
     },
   ],
-  // isDoctor: {
-  //   type: Boolean,
-  //   default: false,
-  // },
-  // doctor: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'Doctor',
-  // },
+  role: {
+    type: String,
+    default: 'patient',
+  },
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+    default: '6206c065f0e90955f20a2463',
+  },
 });
 
-patientSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign(
-    {
-      _id: this._id,
-      email: this.email,
-      // isDoctor: false,
-    },
-    process.env.JWT_PRIVATE_KEY,
-  );
-  return token;
-};
+// patientSchema.methods.generateAuthToken = function () {
+//   const token = jwt.sign(
+//     {
+//       _id: this._id,
+//       email: this.email,
+//       role: 'doctor',
+//     },
+//     process.env.JWT_PRIVATE_KEY,
+//   );
+//   return token;
+// };
 
 const Patient = mongoose.model('Patient', patientSchema);
 
@@ -86,11 +87,11 @@ function validatePatient(patient) {
     surname: Joi.string().min(1).max(64).lowercase().trim().required(),
     email: Joi.string().min(4).max(255).lowercase().trim().required().email(),
     password: Joi.string().min(4).max(255).trim().required(),
+    age: Joi.number().default(18).min(0).max(120),
     health: Joi.array(),
-    age: Joi.number().default(12).min(0).max(120),
-    // fever: Joi.number().min(0),
-    // pulse: Joi.number().min(0),
-    // doctor: Joi.string(),
+    fever: Joi.number().min(0),
+    pulse: Joi.number().min(0),
+    role: Joi.string().default('6206c065f0e90955f20a2463'),
   });
 
   return schema.validate(patient);

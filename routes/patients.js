@@ -1,22 +1,79 @@
-const auth = require('../middleware/auth');
-const validateObjectId = require('../middleware/validateObjectId');
-const { Patient } = require('../models/patient');
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
+const { Patient, validatePatient } = require('../models/patient');
+const { Doctor } = require('../models/doctor');
 const express = require('express');
 const router = express.Router();
 
 // Get all patients
-router.get('/', [auth], async (req, res) => {
-  // if (!req.user.isDoctor) return res.status(400).send('Access denied!');
-  const queryResult = await req.query;
+router.get('/', async (req, res) => {
+  const queryResult = req.query;
 
   const patients = await Patient.find(queryResult);
-  // .populate('doctor', '_id name surname')
-  // .select('-__v');
 
   if (!patients || patients.length == 0)
     return res.status(404).send('The patient with the given Id was not found.');
 
   patients.length == 1 ? res.send(patients[0]) : res.send(patients);
+});
+
+// Create a new patient
+router.post('/create', async (req, res) => {
+  const { error } = validatePatient(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let patient = await Patient.findOne({ email: req.body.email });
+  if (patient)
+    return res.status(400).send('Patient with the given email exists.');
+
+  patient = {};
+
+  patient = new Patient(
+    _.pick(req.body, ['name', 'surname', 'email', 'password', 'doctors'])
+  );
+
+  bcrypt.hash(patient.password, 10, async function (err, hash) {
+    patient.password = hash;
+    await patient.save();
+    res.send(patient);
+  });
+});
+
+// Create a random patient
+router.get('/random', async (req, res) => {
+  const date = Date.now().toString();
+  const name = 'name' + date;
+  const surname = 'surname' + date;
+  const email = name + '@hospital.com';
+  const password = date;
+
+  let patient = new Patient({
+    name: name,
+    surname: surname,
+    email: email,
+    password: password,
+  });
+
+  bcrypt.hash(patient.password, 10, async function (err, hash) {
+    patient.password = hash;
+    await patient.save();
+    res.send(patient);
+  });
+});
+
+// Assign a doctor to patient
+router.patch('/:patientId', async (req, res) => {
+  const patient = await Patient.findOne({ _id: req.params.patientId });
+  if (!patient)
+    return res.status(404).send('The patient with the given id was not found.');
+
+  const doctor = await Doctor.findOne({ _id: req.body.doctorId });
+  if (!doctor)
+    return res.status(404).send('The doctor with the given id was not found.');
+
+  patient.doctor = doctor._id;
+  await patient.save();
+  res.send(patient);
 });
 
 // Post new health info - temporary
@@ -30,34 +87,13 @@ router.post('/', async (req, res) => {
   res.send(patient);
 });
 
-router.get('/new', async (req, res) => {
-  const date = Date.now().toString();
-  const name = 'name' + date;
-  const surname = 'surname' + date;
-  const email = name + '@hospital.com';
-  const password = date;
-
-  let patient = new Patient({
-    name: name,
-    surname: surname,
-    email: email,
-    password: password,
-    health: [],
-  });
-
-  // patient.password = await bcrypt.hash(password, salt);
-  await patient.save();
-
-  result = await Patient.findById(patient._id);
-
-  res.send(result);
-});
-
 // Post new health info
-router.put('/:id', [auth, validateObjectId], async (req, res) => {
-  let patient = await Patient.findOne({ _id: req.params.id });
+router.post('/:email', async (req, res) => {
+  let patient = await Patient.findOne({ email: req.params.email });
   if (!patient)
-    return res.status(404).send('The patient with the given id was not found.');
+    return res
+      .status(404)
+      .send('The patient with the given email was not found.');
 
   patient.health.push(req.body);
 

@@ -36,29 +36,30 @@ const doctorSchema = new mongoose.Schema({
     minlength: 4,
     maxlength: 255,
   },
-  // isDoctor: {
-  //   type: Boolean,
-  //   default: true,
-  // },
-  // patients: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Patient',
-  //   },
-  // ],
+  role: {
+    type: String,
+    default: 'doctor',
+  },
+  patients: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Patient',
+      default: [],
+    },
+  ],
 });
 
-doctorSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign(
-    {
-      _id: this._id,
-      email: this.email,
-      // isDoctor: true,
-    },
-    process.env.JWT_PRIVATE_KEY
-  );
-  return token;
-};
+// doctorSchema.methods.generateAuthToken = function () {
+//   const token = jwt.sign(
+//     {
+//       _id: this._id,
+//       email: this.email,
+//       role: this.role,
+//     },
+//     process.env.JWT_PRIVATE_KEY
+//   );
+//   return token;
+// };
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
@@ -68,7 +69,8 @@ function validateDoctor(doctor) {
     surname: Joi.string().min(1).max(64).lowercase().trim().required(),
     email: Joi.string().min(4).max(255).lowercase().trim().required().email(),
     password: Joi.string().min(4).max(255).trim().required(),
-    // patients: Joi.array(),
+    role: Joi.string().default('doctor'),
+    patients: Joi.array().default([]),
   });
 
   return schema.validate(doctor);
