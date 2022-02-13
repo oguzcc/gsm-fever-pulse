@@ -83,7 +83,7 @@ router.patch('/:patientId', async (req, res) => {
 // Post new health info - temporary
 router.post('/', async (req, res) => {
   let patient = await Patient.findOne({
-    _id: '6202b4323f2d5fd5ff14e5b2',
+    _id: '6209417e76f3811e895cf9e8',
   }).select('-password -__v');
 
   patient.health.push(req.body);
