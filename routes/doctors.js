@@ -8,8 +8,9 @@ const router = express.Router();
 // Get all doctors
 router.get('/', async (req, res) => {
   const queryResult = req.query;
-  const doctors = await Doctor.find(queryResult).select('-password -__v');
-
+  const doctors = await Doctor.find(queryResult)
+    .select('-password -__v')
+    .populate('patients', 'name surname');
   if (!doctors || doctors.length == 0)
     return res.status(404).send('The doctor with the given Id was not found.');
 
