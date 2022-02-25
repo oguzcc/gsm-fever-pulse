@@ -15,8 +15,6 @@ router.get('/', async (req, res) => {
     return res.status(404).send('The doctor with the given Id was not found.');
 
   doctors.length == 1 ? res.send(doctors[0]) : res.send(doctors);
-
-  res.send(doctors);
 });
 
 // Create a new doctor
