@@ -75,9 +75,18 @@ router.patch('/:patientId', async (req, res) => {
   if (!doctor)
     return res.status(404).send('The doctor with the given id was not found.');
 
+  const found = doctor.patients.find(
+    (element) => element == patient._id.toString()
+  );
+
+  if (found)
+    return res.status(400).send('The patient already exits in the doctor');
+
+  doctor.patients.push(patient._id);
   patient.doctor = doctor._id;
+  await doctor.save();
   await patient.save();
-  res.send(patient);
+  res.send(doctor);
 });
 
 // Post new health info - temporary

@@ -8,9 +8,7 @@ const router = express.Router();
 // Get all doctors
 router.get('/', async (req, res) => {
   const queryResult = req.query;
-  const doctors = await Doctor.find(queryResult)
-    .select('-password -__v')
-    .populate('patients');
+  const doctors = await Doctor.find(queryResult).select('-password -__v');
   if (!doctors || doctors.length == 0)
     return res.status(404).send('The doctor with the given Id was not found.');
 
@@ -43,24 +41,24 @@ router.post('/create', async (req, res) => {
   });
 });
 
-// Add a patient to doctor
-router.patch('/:doctorId', async (req, res) => {
-  const doctor = await Doctor.findOne({ _id: req.params.doctorId }).select(
-    '-password -__v'
-  );
-  if (!doctor)
-    return res.status(404).send('The doctor with the given id was not found.');
+// // Add a patient to doctor deprecated
+// router.patch('/:doctorId', async (req, res) => {
+//   const doctor = await Doctor.findOne({ _id: req.params.doctorId }).select(
+//     '-password -__v'
+//   );
+//   if (!doctor)
+//     return res.status(404).send('The doctor with the given id was not found.');
 
-  const patient = await Patient.findOne({ _id: req.body.patientId });
-  if (!patient)
-    return res.status(404).send('The patient with the given id was not found.');
+//   const patient = await Patient.findOne({ _id: req.body.patientId });
+//   if (!patient)
+//     return res.status(404).send('The patient with the given id was not found.');
 
-  if (doctor.patients.includes(patient._id))
-    return res.status(400).send('This patient is already in the doctor list.');
+//   if (doctor.patients.includes(patient._id))
+//     return res.status(400).send('This patient is already in the doctor list.');
 
-  doctor.patients.push(patient._id);
-  await doctor.save();
-  res.send(doctor);
-});
+//   doctor.patients.push(patient._id);
+//   await doctor.save();
+//   res.send(doctor);
+// });
 
 module.exports = router;
